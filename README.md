@@ -74,16 +74,32 @@ Python 3.11 or newer. Library versions are listed in `requirements.txt`.
 
 ## How to Run
 
-_TODO_
-
 ```bash
-python -m src.simulate --algo flc_sinc_csi --scenario irradiance_steps
-pytest
+pytest                                                          # unit tests
+python -m src.simulate --algo flc_sinc_csi --scenario irradiance_steps   # one run: po | inc | flc_sinc | flc_sinc_csi
+python -m experiments.baseline.duty_sweep_fig13                 # plant validation (paper Fig. 13)
+python -m experiments.baseline.tune_membership                  # MF design grid
+python -m experiments.baseline.tune_conventional                # P&O / InC step and period grid
+python -m experiments.baseline.reproduce_table6_table7          # main reproduction (paper Tables 6 and 7)
 ```
+
+Each full run of the 2 s profile takes about 1–2 s on a laptop.
 
 ## Reproduction Experiments
 
-_TODO:_ reproduce paper Table 6 (irradiance steps) and Table 7 (load steps). Scripts go in `experiments/baseline/`.
+| Script | Paper | Output |
+|---|---|---|
+| `duty_sweep_fig13.py` | Fig. 11b / Fig. 13 | `results/figures/fig13_duty_sweep_sinc_csi.png`, `results/tables/fig13_sinc_csi_ranges.csv` |
+| `reproduce_table6_table7.py` | Tables 6–7, Figs. 18–25 | `results/tables/table6_reproduction.csv`, `table7_reproduction.csv`, figures |
+
+**Simulation model:** single-diode SPR-210 panel (fitted exactly to Table 1) and an averaged boost converter (L = 12 mH, Ce = 150 µF, Co = 250 µF, R = 50 Ω).
+Forward Euler with a 10 µs step. The MPPT period is 1 ms.
+
+**Design choices** (the paper does not specify these):
+
+- Membership-function peaks are taken from our duty sweep and then tuned with a small grid search (`src/membership.py`).
+- P&O and InC use a direct duty step. Step and period were tuned the same way: 0.005 and 1 ms.
+- Convergence time is measured as the time to enter, and stay inside, a ±2 % band around P_opt.
 
 ## Proposed Extension
 
@@ -91,18 +107,36 @@ _TODO:_ chosen extension, the reason for it, and the success metric. Scripts go 
 
 ## Experimental Results
 
-_TODO:_ comparison tables in `results/tables/` and figures in `results/figures/`.
+**Table 6 reproduction:** Fig. 17 irradiance profile, 25 °C. Each cell shows our value, with the paper's value in parentheses.
 
-| Metric | Paper (proposed) | This reproduction | Extension |
+| Algorithm | Efficiency % | Avg. conv. ms | RMSE (W) | RMS % |
+|---|---|---|---|---|
+| P&O | 96.14 (95.41) | 46.9 (65) | 13.34 (8.98) | 97.12 (96.34) |
+| InC | 96.08 (95.6) | 47.7 (60) | 13.55 (8.9) | 97.09 (96.4) |
+| Alg. 3 (SInC) | 97.64 (96.6) | 45.9 (76) | 8.60 (9.0) | 98.80 (96.89) |
+| **Proposed (SInC+CSI)** | **98.19 (97.7)** | **34.3 (53.5)** | **7.54 (8.6)** | **98.81 (97.8)** |
+
+**Table 7 reproduction:** load steps 50 → 20 → 35 Ω. This test was not used for any tuning.
+
+| G (W/m²) | Algorithm | RMSE (W) | RMS % |
 |---|---|---|---|
-| Avg. MPPT efficiency | 97.7 % | – | – |
-| Avg. convergence time | 53.5 ms | – | – |
-| RMSE | 8.6 | – | – |
-| RMS % | 97.8 % | – | – |
+| 1000 | InC | 46.82 (27.11) | 92.30 (97.14) |
+| 1000 | Proposed | 24.39 (25.15) | 97.86 (97.92) |
+| 500 | InC | 15.89 (10.31) | 93.69 (96.57) |
+| 500 | Proposed | 10.69 (9.30) | 97.07 (97.88) |
+
+The paper's main claim is reproduced: the proposed controller has the highest efficiency, the fastest convergence and the lowest RMSE.
+It also recovers much faster than Alg. 3 at low irradiance (the 600 → 200 W/m² step at t = 1.8 s).
+Absolute numbers differ by about 0.5–1 %. Expected causes: the averaged converter model, our own MF breakpoints, and the convergence-time definition.
+
+_TODO: extension results._
 
 ## Limitations
 
-_TODO_
+- Averaged converter model: no 10 kHz switching ripple, ideal components.
+- Membership functions and baseline step sizes were tuned on the same Fig. 17 profile used to report Table 6. The load test (Table 7) is held out.
+- After large irradiance drops (t = 0.6 s and 1.2 s) all controllers show 30–50 ms of power ringing.
+  This comes from the L–Ce resonance, which is lightly damped when the panel operates far left of the MPP (current-source region).
 
 Known gaps in the paper:
 

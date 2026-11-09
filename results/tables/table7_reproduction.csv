@@ -1,0 +1,5 @@
+G,algorithm,efficiency_pct,rmse_w,rms_pct,conv_min_ms,conv_max_ms,conv_avg_ms,conv_failed,paper_rmse_w,paper_rms_pct
+1000,InC,90.112,46.821,92.301,24.700,101.900,55.800,0,27.110,97.140
+1000,Proposed (SInC+CSI),97.209,24.386,97.861,22.000,29.300,25.800,0,25.151,97.920
+500,InC,92.659,15.894,93.686,38.200,74.900,59.467,0,10.309,96.570
+500,Proposed (SInC+CSI),96.560,10.691,97.072,28.600,47.500,37.433,0,9.301,97.880

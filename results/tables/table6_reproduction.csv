@@ -1,0 +1,5 @@
+algorithm,efficiency_pct,rmse_w,rms_pct,conv_min_ms,conv_max_ms,conv_avg_ms,conv_failed,paper_efficiency_pct,paper_conv_avg_ms,paper_rmse_w,paper_rms_pct
+P&O,96.140,13.344,97.125,0.000,115.700,46.930,0,95.410,65.000,8.980,96.340
+InC,96.078,13.550,97.094,0.000,108.200,47.730,0,95.600,60.000,8.900,96.400
+Alg. 3 (SInC),97.641,8.603,98.797,0.000,157.900,45.890,0,96.600,76.000,9.000,96.890
+Proposed (SInC+CSI),98.194,7.543,98.811,0.000,85.800,34.300,0,97.700,53.500,8.600,97.800
