@@ -101,9 +101,34 @@ Forward Euler with a 10 µs step. The MPPT period is 1 ms.
 - P&O and InC use a direct duty step. Step and period were tuned the same way: 0.005 and 1 ms.
 - Convergence time is measured as the time to enter, and stay inside, a ±2 % band around P_opt.
 
-## Proposed Extension
+## Proposed Extension: noise-robust SInC estimation
 
-_TODO:_ chosen extension, the reason for it, and the success metric. Scripts go in `experiments/proposed/`.
+**Why.** The paper's own conclusion says the method "remains sensitive to the precision of measurement instruments" and to the division in dI/dV, but it never tests this.
+Near the MPP the voltage change per MPPT sample is only tens of mV, so a few tenths of a percent of sensor noise is enough to flip the sign of SInC.
+CSI is a difference of SInC, so it amplifies the noise again.
+
+There is also a systematic bias. When ΔV is mostly noise, SInC ≈ I/V + (zero-mean noise ratio). Since I/V > 0, the controller keeps concluding "left of the MPP" and drives D down to its lower limit.
+P&O suffers from the same bias, with dP/dV ≈ I + noise.
+
+**What.** `src/mppt/robust.py` implements a robust estimator made of three parts, each of which can be switched off independently:
+
+| Part | Change |
+|---|---|
+| **F** | EMA filter on V and I (α = 0.5) |
+| **D** | Accumulated-difference dead band. dI/dV is computed against the last reference sample, and only once \|V − V_ref\| ≥ δ_V = 0.5 V. The denominator therefore never shrinks to noise level. |
+| **C** | SInC clipped to ±1.5 S |
+
+α and δ_V were chosen on tuning seeds 100–102 (`tune_robust.py`). Results are reported on separate seeds 0–4.
+
+**Experiment.** Gaussian noise σ = 0–1 % of full scale (Voc, Isc) is added to every V and I sample the controller sees. Each level is run with 5 seeds on the Fig. 17 profile.
+For a fair comparison, P&O and InC get the same filter, and Alg. 3 gets the same robust estimator.
+
+```bash
+python -m experiments.proposed.noise_sweep --tag baseline                 # paper controllers only
+python -m experiments.proposed.tune_robust                                # alpha / delta_v grid (seeds 100-102)
+python -m experiments.proposed.noise_sweep --tag extension --variants flc_sinc_csi prop+F prop+D prop+C prop+FD prop+FDC prop+FDC+gauss flc_sinc alg3+FDC po po+F inc inc+F
+python -m experiments.proposed.plot_noise                                 # figures + summary table
+```
 
 ## Experimental Results
 
@@ -129,7 +154,24 @@ The paper's main claim is reproduced: the proposed controller has the highest ef
 It also recovers much faster than Alg. 3 at low irradiance (the 600 → 200 W/m² step at t = 1.8 s).
 Absolute numbers differ by about 0.5–1 %. Expected causes: the averaged converter model, our own MF breakpoints, and the convergence-time definition.
 
-_TODO: extension results._
+**Extension: efficiency (%) under measurement noise**, mean ± std over 5 seeds (`results/tables/noise_efficiency_table.csv`, `results/figures/noise_*.png`):
+
+| Controller | σ = 0 | 0.2 % FS | 0.5 % FS | 1 % FS |
+|---|---|---|---|---|
+| P&O | 96.14 | 83.52 ± 4.93 | 40.69 ± 3.05 | 37.55 ± 0.25 |
+| P&O + filter | 95.20 | 93.41 ± 0.41 | 68.71 ± 14.59 | 38.49 ± 0.84 |
+| Alg. 3 (paper) | 97.64 | 96.59 ± 0.08 | 92.25 ± 1.88 | 78.74 ± 8.19 |
+| Alg. 3 + robust estimator | 96.70 | 96.70 ± 0.07 | 96.13 ± 0.14 | **94.32 ± 0.32** |
+| Proposed (paper) | **98.19** | 96.31 ± 0.30 | 85.92 ± 5.45 | 46.49 ± 5.60 |
+| Proposed + F + D (+C) **(robust)** | 97.00 | **96.97 ± 0.04** | **96.20 ± 0.25** | 92.56 ± 2.03 |
+| Robust + Gaussian MF | 96.86 | 96.75 ± 0.07 | 95.92 ± 0.21 | 93.26 ± 0.56 |
+
+**Ablation findings:**
+
+- At 1 % noise, F alone gives 87.2 % and D alone gives 64.7 %. Together they give 92.6 %, so the two parts are complementary.
+- C has no measurable effect, neither on its own nor on top of F + D. Once the dead band bounds the denominator, SInC never reaches the clip limit.
+- Cost: with no noise, efficiency drops by 1.2 points (98.19 → 97.00) and the average convergence time rises from 34 ms to 95 ms, because of the filter lag and the dead band.
+- With noise, the CSI input that helps in the clean case becomes a liability. The robust single-input Alg. 3 is the most robust controller at 1 % noise.
 
 ## Limitations
 
@@ -137,6 +179,9 @@ _TODO: extension results._
 - Membership functions and baseline step sizes were tuned on the same Fig. 17 profile used to report Table 6. The load test (Table 7) is held out.
 - After large irradiance drops (t = 0.6 s and 1.2 s) all controllers show 30–50 ms of power ringing.
   This comes from the L–Ce resonance, which is lightly damped when the panel operates far left of the MPP (current-source region).
+- Noise model: white Gaussian noise per MPPT sample only. There is no ADC quantisation, sensor offset or oversampling.
+  δ_V is fixed for a design noise level; it is not estimated online.
+- The convergence-time metric (±2 % band) is not meaningful under heavy noise, so the extension is compared on efficiency and RMSE.
 
 Known gaps in the paper:
 
