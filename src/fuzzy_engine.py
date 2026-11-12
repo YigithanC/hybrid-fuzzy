@@ -83,6 +83,29 @@ class MamdaniFIS:
         # precompute each output set on the universe
         self.out_mf = {lab: output.mf_curve(lab, self.u) for lab in output.labels}
 
+    def explain(self, *x: float) -> dict:
+        """Return every intermediate step of one inference (for the demo GUI and the oral defence).
+
+        Keys: memberships (one dict per input), fired (list of (antecedent, consequent, strength) with
+        strength > 0, strongest first), strength (per output set), u, aggregated (curve), output (dD).
+        """
+        mus = [var.membership(xi) for var, xi in zip(self.inputs, x)]
+        fired = []
+        strength = dict.fromkeys(self.output.labels, 0.0)
+        for antecedent, consequent in self.rules.items():
+            w = min(m[a] for m, a in zip(mus, antecedent))
+            if w > 0:
+                fired.append((antecedent, consequent, w))
+            strength[consequent] = max(strength[consequent], w)
+        agg = np.zeros_like(self.u)
+        for lab, w in strength.items():
+            if w > 0:
+                agg = np.maximum(agg, np.minimum(w, self.out_mf[lab]))
+        out = float(fuzz.defuzz(self.u, agg, "centroid")) if agg.sum() > 0 else 0.0
+        fired.sort(key=lambda r: -r[2])
+        return {"memberships": mus, "fired": fired, "strength": strength, "u": self.u,
+                "aggregated": agg, "output": out}
+
     def infer(self, *x: float) -> float:
         mus = [var.membership(xi) for var, xi in zip(self.inputs, x)]
         # strength of each consequent = max over the rules that point to it (max aggregation)

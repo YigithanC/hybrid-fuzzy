@@ -15,7 +15,7 @@ class PanelParams:
     pmax: float = 210.0          # W
     k_voc: float = -0.2792e-2    # 1/degC  (-0.2792 %/degC)
     k_isc: float = 0.035894e-2   # 1/degC  (+0.035894 %/degC)
-    n_cells: int = 72            # TODO: verify against the SPR-210 datasheet
+    n_cells: int = 72            # series cells; only the product n*Ns enters the model, and the fit compensates
     t_ref: float = 25.0          # degC
     g_ref: float = 1000.0        # W/m^2
 
@@ -33,13 +33,6 @@ class ConverterParams:
     d_max: float = 0.95
 
 
-@dataclass(frozen=True)
-class SimParams:
-    dt: float = 1e-4             # s, MPPT sampling period (TODO: decide; 10 kHz PWM -> 1e-4)
-    t_end: float = 2.0           # s, length of the Fig. 17 irradiance profile
-    d_init: float = 0.1
-
-
 PANEL = PanelParams()
 CONVERTER = ConverterParams()
-SIM = SimParams()
+# Simulation timing (plant step 10 us, MPPT period 1 ms) is defined in src/simulate.py.

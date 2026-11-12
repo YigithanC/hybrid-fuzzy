@@ -1,7 +1,9 @@
 # Hybrid InC–Fuzzy MPPT for PV Systems: Reproduction and Extension
 
 > Fuzzy Logic course term project: reproduction of a published fuzzy MPPT controller plus an original extension.
-> **Status:** 🚧 skeleton. Sections marked _TODO_ are filled in as the work progresses.
+> **Status:** reproduction, extension and technical report completed. The report is [`report/report.pdf`](report/report.pdf), written in Turkish.
+>
+> **Live demo:** `python -m demo` opens a GUI where you can set irradiance, temperature, load, noise and the controllers and run them, and step through the fuzzy inference by hand.
 
 ## Student Information
 
@@ -48,7 +50,8 @@ At the MPP, SInC = 0. SInC < 0 means the operating point is right of the MPP, so
                                                               D[k] = D[k-1] + ΔD ◄─────┘ ──► boost converter
 ```
 
-_TODO: membership function plots (`results/figures/`)._
+Membership functions: `results/figures/fis_membership.png`. Control surface: `results/figures/fis_surface.png`. Block diagram: `results/figures/system_diagram.png`.
+Breakpoints and their derivation are documented in `src/membership.py`.
 
 ## Dataset
 
@@ -75,6 +78,7 @@ Python 3.11 or newer. Library versions are listed in `requirements.txt`.
 ## How to Run
 
 ```bash
+python -m demo                                                  # live demo GUI (Tkinter)
 pytest                                                          # unit tests
 python -m src.simulate --algo flc_sinc_csi --scenario irradiance_steps   # one run: po | inc | flc_sinc | flc_sinc_csi
 python -m experiments.baseline.duty_sweep_fig13                 # plant validation (paper Fig. 13)

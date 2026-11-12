@@ -33,6 +33,16 @@ def test_fis_sign_and_symmetry():
     assert f.infer(-0.12, 1.0) == pytest.approx(0.0, abs=1e-9)  # SInC NS & CSI large -> hold (Table 5)
 
 
+def test_explain_matches_infer():
+    f = build_fis()
+    for s, c in [(-0.6, 0.0), (0.05, 0.0), (0.2, -0.03), (0.0, 0.0)]:
+        ex = f.explain(s, c)
+        assert ex["output"] == pytest.approx(f.infer(s, c))
+        assert all(w > 0 for _, _, w in ex["fired"])
+    ex = f.explain(0.05, 0.0)    # PS (0.56) and ZE (0.44) with CSI ZE -> NM and ZE fire
+    assert {(r[0], r[1]) for r in ex["fired"]} == {(("PS", "ZE"), "NM"), (("ZE", "ZE"), "ZE")}
+
+
 def test_metrics():
     p_opt = np.full(100, 200.0)
     assert metrics.mppt_efficiency(p_opt * 0.9, p_opt) == pytest.approx(90.0)
