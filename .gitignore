@@ -19,5 +19,8 @@ Thumbs.db
 *.log
 results/raw/
 
+# Word lock files
+~$*.docx
+
 # Secrets (never commit)
 .env

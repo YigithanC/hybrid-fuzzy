@@ -85,6 +85,14 @@ python -m experiments.baseline.reproduce_table6_table7          # main reproduct
 
 Each full run of the 2 s profile takes about 1–2 s on a laptop.
 
+The technical report, written in Turkish, is generated from the result tables. This keeps every number in it identical to the experiment outputs.
+
+```bash
+python -m experiments.baseline.plot_system                      # extra figures (PV curves, MFs, control surface, block diagram)
+python report/build_report.py                                   # -> report/report.docx
+powershell -ExecutionPolicy Bypass -File report/export_pdf.ps1  # -> report/report.pdf (needs MS Word)
+```
+
 ## Reproduction Experiments
 
 | Script | Paper | Output |
