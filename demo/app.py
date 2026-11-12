@@ -12,6 +12,7 @@ aggregated output set and the centroid dD. This is the Mamdani step that runs ev
 """
 from __future__ import annotations
 
+import queue
 import threading
 import time
 import tkinter as tk
@@ -118,7 +119,7 @@ class DemoApp(tk.Tk):
         self.t_label = ttk.Label(left, width=7)
         self.t_label.grid(row=3, column=2, sticky="w")
         self.r_entry = ttk.Entry(left, textvariable=self.v_r, width=10)
-        row("Yük R (Ω)", self.r_entry, 4, "20–200")
+        row("Yük R (Ω)", self.r_entry, 4, "5–500")
         self.steps_entry = ttk.Entry(left, textvariable=self.v_steps, width=26)
         row("Basamaklar (W/m²)", self.steps_entry, 5)
         self.stepdur_entry = ttk.Entry(left, textvariable=self.v_stepdur, width=10)
@@ -219,7 +220,10 @@ class DemoApp(tk.Tk):
         elif s == SCENARIOS[1]:
             g_fn, r_fn, changes = scenarios.irradiance_steps, (lambda t: np.full_like(t, r)), list(np.arange(0, 2.0, 0.2))
         elif s == SCENARIOS[2]:
-            levels = tuple(float(x) for x in self.v_steps.get().replace(";", ",").split(",") if x.strip())
+            try:
+                levels = tuple(float(x) for x in self.v_steps.get().replace(";", ",").split(",") if x.strip())
+            except ValueError:
+                levels = ()
             if not levels or min(levels) < 50 or max(levels) > 1200:
                 raise ValueError("Basamaklar 50–1200 W/m² arasında, virgülle ayrılmış olmalı.")
             dur = float(self.v_stepdur.get())
@@ -244,21 +248,42 @@ class DemoApp(tk.Tk):
             return
         self.run_btn.state(["disabled"])
         self.status.config(text="Çalışıyor…")
-        threading.Thread(target=self._worker, args=(prm,), daemon=True).start()
+        # The worker never touches Tk: it posts messages to a queue that the GUI thread polls.
+        self._q: queue.Queue = queue.Queue()
+        threading.Thread(target=self._worker, args=(prm, self._q), daemon=True).start()
+        self.after(100, self._poll)
 
-    def _worker(self, prm: dict) -> None:
+    def _poll(self) -> None:
+        try:
+            while True:
+                kind, *payload = self._q.get_nowait()
+                if kind == "status":
+                    self.status.config(text=payload[0])
+                elif kind == "done":
+                    self._show(*payload)
+                    return
+                elif kind == "error":
+                    self.status.config(text="Hata.")
+                    self.run_btn.state(["!disabled"])
+                    messagebox.showerror("Hata", payload[0])
+                    return
+        except queue.Empty:
+            pass
+        self.after(100, self._poll)
+
+    @staticmethod
+    def _worker(prm: dict, q: queue.Queue) -> None:
         results = []
         t0 = time.perf_counter()
         try:
             for k in prm["algos"]:
-                self.after(0, self.status.config, {"text": f"Çalışıyor: {dict(ALGOS)[k]} …"})
+                q.put(("status", f"Çalışıyor: {dict(ALGOS)[k]} …"))
                 log = run(make_controller(k), g_fn=prm["g_fn"], r_fn=prm["r_fn"], t_end=prm["t_end"],
                           noise_std=prm["noise"], seed=prm["seed"], t_cell=prm["t_cell"])
                 results.append((k, log, summarize(log, prm["changes"])))
-            self.after(0, self._show, results, time.perf_counter() - t0)
+            q.put(("done", results, time.perf_counter() - t0))
         except Exception as e:  # noqa: BLE001
-            self.after(0, messagebox.showerror, "Hata", str(e))
-            self.after(0, self.run_btn.state, ["!disabled"])
+            q.put(("error", str(e)))
 
     def _show(self, results, elapsed: float) -> None:
         self.ax_p.clear()
@@ -351,6 +376,8 @@ class DemoApp(tk.Tk):
         self.ffig.tight_layout()
         self.fcanvas.draw_idle()
         d = ex["output"]
+        if abs(d) < 5e-5:
+            d = 0.0               # avoid showing "-0.0000"
         direction = "D artır (gerilimi düşür)" if d > 1e-6 else "D azalt (gerilimi yükselt)" if d < -1e-6 else "D sabit (MPP)"
         self.dd_label.config(text=f"ΔD = {d:+.4f}   →  {direction}")
         self.rules_list.delete(0, "end")
