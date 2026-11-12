@@ -1,7 +1,7 @@
 # Hybrid InC–Fuzzy MPPT for PV Systems: Reproduction and Extension
 
 > Fuzzy Logic course term project: reproduction of a published fuzzy MPPT controller plus an original extension.
-> **Status:** reproduction, extension and technical report completed. The report is [`report/report.pdf`](report/report.pdf), written in Turkish.
+> **Status:** reproduction, extension, technical report and presentation completed. The report is [`report/report.pdf`](report/report.pdf) and the slides are [`presentation/presentation.pdf`](presentation/presentation.pdf), both in Turkish.
 >
 > **Live demo:** `python -m demo` opens a GUI where you can set irradiance, temperature, load, noise and the controllers and run them, and step through the fuzzy inference by hand.
 
@@ -95,7 +95,11 @@ The technical report, written in Turkish, is generated from the result tables. T
 python -m experiments.baseline.plot_system                      # extra figures (PV curves, MFs, control surface, block diagram)
 python report/build_report.py                                   # -> report/report.docx
 powershell -ExecutionPolicy Bypass -File report/export_pdf.ps1  # -> report/report.pdf (needs MS Word)
+python presentation/build_presentation.py                       # -> presentation/presentation.pptx + speaker_notes.md
+powershell -ExecutionPolicy Bypass -File presentation/export_pdf.ps1  # -> presentation/presentation.pdf (needs PowerPoint)
 ```
+
+The slides read every number from the same result tables. Speaker notes (Turkish, with timings) are in the `.pptx` and in `presentation/speaker_notes.md`.
 
 ## Reproduction Experiments
 
