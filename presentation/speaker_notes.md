@@ -178,6 +178,9 @@ Kırpmanın hiçbir etkisi yok; ölü bölge paydayı sınırlayınca SInC zaten
 Bunu dürüstçe raporluyorum: üç parçadan biri gereksiz çıktı.
 Bedeli: gürültüsüz koşulda verim 98,2'den 97,0'a düşüyor, ortalama yakınsama 34'ten 95 ms'ye çıkıyor;
 filtre gecikmesi ve ölü bölge yüzünden. Yani bu bir ödünleşim; gürültülü ortamda değerli.
+Hesaplama maliyetini de ölçtüm: kestirici karar başına 1,8 µs yerine 2,1 µs sürüyor, yani ek yük
+mikrosaniyenin altında. Asıl maliyet bulanık çıkarımın kendisi: saf Python'da yaklaşık 1,1 ms, P&O ise
+yaklaşık 2 µs. Gerçek donanımda kontrol yüzeyi bir arama tablosuna dönüştürülür.
 Son olarak üçgen yerine Gauss üyelik fonksiyonu denedim: %1'de 93,3 ve sapma daha küçük.
 
 ## 18. Canlı demo

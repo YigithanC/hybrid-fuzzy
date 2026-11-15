@@ -144,6 +144,7 @@ python -m experiments.proposed.noise_sweep --tag baseline                 # pape
 python -m experiments.proposed.tune_robust                                # alpha / delta_v grid (seeds 100-102)
 python -m experiments.proposed.noise_sweep --tag extension --variants flc_sinc_csi prop+F prop+D prop+C prop+FD prop+FDC prop+FDC+gauss flc_sinc alg3+FDC po po+F inc inc+F
 python -m experiments.proposed.plot_noise                                 # figures + summary table
+python -m experiments.proposed.execution_time                             # time per MPPT decision -> results/tables/execution_time.csv
 ```
 
 ## Experimental Results
@@ -189,6 +190,21 @@ Absolute numbers differ by about 0.5–1 %. Expected causes: the averaged conver
 - Cost: with no noise, efficiency drops by 1.2 points (98.19 → 97.00) and the average convergence time rises from 34 ms to 95 ms, because of the filter lag and the dead band.
 - With noise, the CSI input that helps in the clean case becomes a liability. The robust single-input Alg. 3 is the most robust controller at 1 % noise.
 
+**Execution time per MPPT decision** (`results/tables/execution_time.csv`): pure Python on the development PC, median over 5 × 1999 calls of `update(V, I)` on the Fig. 17 profile, no noise.
+
+| Controller | Median (µs) | p95 (µs) | of which SInC/CSI estimator (µs) |
+|---|---|---|---|
+| P&O | 2.2 | 3.9 | – |
+| InC | 2.1 | 3.7 | – |
+| Alg. 3 (SInC) | 829 | 1289 | 1.7 |
+| Proposed (SInC+CSI) | 1134 | 1762 | 1.8 |
+| Alg. 3 + robust | 839 | 1288 | 2.2 |
+| Proposed + robust | 1068 | 1625 | 2.1 |
+
+- Almost all of the time is the Mamdani inference (rule evaluation and the 801-point centroid), about 500 times P&O.
+- The robust estimator adds about 0.3 µs per decision, less than 0.1 % of the total. Differences between the fuzzy controllers' totals come from how many rules fire and from timing noise, not from the estimator.
+- In pure Python the inference takes about as long as the 1 ms MPPT period. On real hardware the static control surface would be stored as a 2-D lookup table or compiled code.
+
 ## Limitations
 
 - Averaged converter model: no 10 kHz switching ripple, ideal components.
@@ -198,6 +214,7 @@ Absolute numbers differ by about 0.5–1 %. Expected causes: the averaged conver
 - Noise model: white Gaussian noise per MPPT sample only. There is no ADC quantisation, sensor offset or oversampling.
   δ_V is fixed for a design noise level; it is not estimated online.
 - The convergence-time metric (±2 % band) is not meaningful under heavy noise, so the extension is compared on efficiency and RMSE.
+- Execution times are pure-Python timings on a PC. They compare the controllers' relative cost, not absolute time on a microcontroller.
 
 Known gaps in the paper:
 

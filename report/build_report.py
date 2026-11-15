@@ -81,6 +81,7 @@ t6 = pd.read_csv(TAB / "table6_reproduction.csv")
 t7 = pd.read_csv(TAB / "table7_reproduction.csv")
 ns = pd.read_csv(TAB / "noise_summary_extension.csv")
 f13 = pd.read_csv(TAB / "fig13_sinc_csi_ranges.csv")
+et = pd.read_csv(TAB / "execution_time.csv")
 row6 = {r["algorithm"]: r for _, r in t6.iterrows()}
 P6 = row6["Proposed (SInC+CSI)"]
 
@@ -95,6 +96,14 @@ def effstd(variant: str, level: float) -> float:
 
 def conv0(variant: str) -> float:
     return float(ns[(ns.variant == variant) & (ns.noise_pct_fs == 0.0)].conv_avg_ms_mean.iloc[0])
+
+
+def ns_val(variant: str, level: float, col: str) -> float:
+    return float(ns[(ns.variant == variant) & (ns.noise_pct_fs == level)][col].iloc[0])
+
+
+def et_val(algo: str, level: float, col: str = "median_us") -> float:
+    return float(et[(et.algorithm == algo) & (et.noise_pct_fs == level)][col].iloc[0])
 
 
 def f(x: float, d: int = 2) -> str:
@@ -548,8 +557,10 @@ def s7() -> None:
         ["Gürültü deneyi", "s = 0, 0,1, 0,2, 0,5, 1 % tam ölçek; 5 tohum (0–4); ayar tohumları 100–102"],
         ["Ölçütler", "η = ΣP_pv/ΣP_opt; RMSE; RMS%; yakınsama süresi (±%2 bant); görev oranı titreşimi"],
         ["Çalışma süresi", "2 s'lik bir benzetim ≈ 1–2 s; tüm gürültü deneyi ≈ 1 dk (paralel)"],
+        ["Karar süresi ölçümü", "update(V, I) çağrısı başına time.perf_counter_ns; ışınım profili, 5 tohum × 1999 "
+         "karar, s = 0 ve %1; yalnızca denetleyici ölçülür, tesis benzetimi hariç"],
     ], "Deney ortamı ve parametreleri.", [3.2, 12.8], font_size=8.5)
-    para("Tüm sonuçlar README'deki komutlarla yeniden üretilebilir; 22 birim testi model, kural tabanı, ölçütler ve "
+    para("Tüm sonuçlar README'deki komutlarla yeniden üretilebilir; 23 birim testi model, kural tabanı, ölçütler ve "
          "kestirici için temel doğrulamaları yapar (pytest).", indent=True)
 
 
@@ -625,6 +636,48 @@ def s8() -> None:
     figure("noise_timeseries_0p5pct.png", "s = %0,5 gürültüde makaledeki denetleyici (sol) ve dayanıklı kestiricili "
            "denetleyici (sağ).", 15.5)
 
+    h("8.5 Baseline ile karşılaştırma özeti ve hesaplama maliyeti", 2)
+    b, r = "flc_sinc_csi", "prop+FDC"
+
+    def delta(x0: float, x1: float, unit: str, d: int = 2) -> str:
+        return f"{'+' if x1 >= x0 else '−'}{f(abs(x1 - x0), d)} {unit}"
+    rows = []
+    for lv, lab in ((0.0, "0"), (0.5, "%0,5"), (1.0, "%1")):
+        x0, x1 = ns_val(b, lv, "efficiency_mean"), ns_val(r, lv, "efficiency_mean")
+        rows.append([f"Verim (%), s = {lab}", f(x0), f(x1), delta(x0, x1, "puan")])
+    for lv, lab in ((0.0, "0"), (1.0, "%1")):
+        x0, x1 = ns_val(b, lv, "rmse_mean"), ns_val(r, lv, "rmse_mean")
+        rows.append([f"RMSE (W), s = {lab}", f(x0), f(x1), delta(x0, x1, "W")])
+    x0, x1 = conv0(b), conv0(r)
+    rows.append(["Ort. yakınsama (ms), s = 0", f(x0, 1), f(x1, 1), delta(x0, x1, "ms", 1)])
+    e0, e1 = et_val("flc_sinc_csi", 0.0, "estimator_median_us"), et_val("prop+FDC", 0.0, "estimator_median_us")
+    rows.append(["SInC/CSI kestirimi (µs/karar)", f(e0, 1), f(e1, 1), delta(e0, e1, "µs", 1)])
+    t0, t1 = et_val("flc_sinc_csi", 0.0), et_val("prop+FDC", 0.0)
+    rows.append(["Toplam karar süresi (µs, medyan)", f(t0, 0), f(t1, 0), "ölçüm değişkenliği içinde"])
+    table(["Ölçüt", "Önerilen (makale)", "Önerilen + dayanıklı", "Değişim"], rows,
+          "Baseline (makaledeki önerilen denetleyici) ile dayanıklı kestiricili sürümün karşılaştırması "
+          "(gürültülü satırlar 5 tohum ortalaması; süreler s = 0).", [5.6, 3.2, 3.6, 3.6], font_size=9)
+    names = [("po", "P&O"), ("inc", "InC"), ("flc_sinc", "Alg. 3 (SInC)"), ("flc_sinc_csi", "Önerilen (SInC+CSI)"),
+             ("alg3+FDC", "Alg. 3 + dayanıklı"), ("prop+FDC", "Önerilen + dayanıklı")]
+    rows = []
+    for k, name in names:
+        est = et_val(k, 0.0, "estimator_median_us") if k not in ("po", "inc") else float("nan")
+        rows.append([name, f(et_val(k, 0.0), 1), f(et_val(k, 0.0, "p95_us"), 1), f(et_val(k, 1.0), 1),
+                     "–" if est != est else f(est, 1)])
+    table(["Denetleyici", "Medyan, s = 0", "p95, s = 0", "Medyan, s = %1", "Kestirici"], rows,
+          "MPPT karar süresi (µs/karar), saf Python, 5 × 1999 çağrı.", [4.6, 2.7, 2.7, 3.0, 2.6], font_size=9)
+    ratio = et_val("flc_sinc_csi", 0.0) / et_val("po", 0.0)
+    fis_lo = min(et_val(k, lv) for k in ("flc_sinc", "flc_sinc_csi", "alg3+FDC", "prop+FDC") for lv in (0.0, 1.0))
+    fis_hi = max(et_val(k, lv) for k in ("flc_sinc", "flc_sinc_csi", "alg3+FDC", "prop+FDC") for lv in (0.0, 1.0))
+    para(f"Karar süresinin neredeyse tamamı Mamdani çıkarımına aittir: kuralların değerlendirilmesi ve 801 noktalı "
+         f"ağırlık merkezi integrali saf Python'da {f(fis_lo / 1000, 1)}–{f(fis_hi / 1000, 1)} ms sürer; bu, P&O'nun "
+         f"yaklaşık {ratio:.0f} katıdır. Dayanıklı kestiricinin ek maliyeti bir EMA güncellemesi ve bir karşılaştırmadır; "
+         f"kestirici süresi {f(e0, 1)} → {f(e1, 1)} µs olup karar süresinin binde birinden azdır. Bulanık denetleyiciler "
+         "arasındaki toplam süre farkları, her adımda ateşlenen kural sayısından ve ölçüm değişkenliğinden kaynaklanır; "
+         "kestiriciden kaynaklanmaz. Saf Python'daki çıkarım süresi T_s = 1 ms ile aynı mertebede olduğundan, gerçek "
+         "zamanlı bir uygulamada sabit kontrol yüzeyi (Bölüm 5.3) iki boyutlu bir arama tablosu ya da derlenmiş kod "
+         "olarak gerçeklenmelidir.", indent=True)
+
 
 def s9() -> None:
     h("9. Tartışma (Discussion)")
@@ -642,7 +695,7 @@ def s9() -> None:
     para("Literatürde gürültüye karşı genellikle Type-2 bulanık mantık [@vidal,@boudia] veya sinir ağları "
          "[@intravaia] önerilmektedir. Bu çalışmadaki yaklaşım kural tabanını ve çıkarım tipini değiştirmeden, yalnızca "
          "girdi kestirimini düzelterek benzer bir dayanıklılık sağlar; ek hesaplama maliyeti bir filtre ve bir "
-         "karşılaştırmadan ibarettir. Ayrıca sapmanın mekanizmasının (I/V teriminin pozitif yanlılığı) açıklanması, "
+         "karşılaştırmadan ibarettir (ölçülen ek süre 1 µs'nin altındadır, Bölüm 8.5). Ayrıca sapmanın mekanizmasının (I/V teriminin pozitif yanlılığı) açıklanması, "
          "P&O ve InC'nin neden aynı şekilde başarısız olduğunu da açıklar ve yalnızca filtrelemenin neden yetmediğini "
          "gösterir. Son olarak SInC girdisinin [@shiau]'da daha önce önerilmiş olması, referans makalenin özgünlüğünün "
          "CSI ve genişletilmiş kural tabanıyla sınırlı olduğunu göstermektedir.", indent=True)
@@ -662,6 +715,8 @@ def s10() -> None:
         "Kısmi gölgelenme ve çok tepeli P–V eğrileri incelenmemiştir; incelenen tüm denetleyiciler yerel tepeyi "
         "izleyen yöntemlerdir [@bollipo].",
         "Yalnızca Mamdani yapısı incelenmiştir; Sugeno ve Type-2 karşılaştırması yapılmamıştır.",
+        "Karar süreleri geliştirme bilgisayarında saf Python ile ölçülmüştür; bir mikrodenetleyicideki mutlak süreyi "
+        "değil, denetleyicilerin göreli maliyetini gösterir.",
     ])
 
 

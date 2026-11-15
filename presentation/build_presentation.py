@@ -61,6 +61,11 @@ def tr(x, nd=2):
 
 T6 = {r["algorithm"]: r for r in _csv("table6_reproduction.csv")}
 T7 = _csv("table7_reproduction.csv")
+ET = {(r["algorithm"], float(r["noise_pct_fs"])): r for r in _csv("execution_time.csv")}
+EST0 = float(ET[("flc_sinc_csi", 0.0)]["estimator_median_us"])
+EST1 = float(ET[("prop+FDC", 0.0)]["estimator_median_us"])
+FIS_MS = float(ET[("flc_sinc_csi", 0.0)]["median_us"]) / 1000
+PO_US = float(ET[("po", 0.0)]["median_us"])
 NOISE = {}
 with open(TAB / "noise_efficiency_table.csv", encoding="utf-8") as fh:
     rows = list(csv.reader(fh))
@@ -727,6 +732,9 @@ Kırpmanın hiçbir etkisi yok; ölü bölge paydayı sınırlayınca SInC zaten
 Bunu dürüstçe raporluyorum: üç parçadan biri gereksiz çıktı.
 Bedeli: gürültüsüz koşulda verim 98,2'den 97,0'a düşüyor, ortalama yakınsama 34'ten 95 ms'ye çıkıyor;
 filtre gecikmesi ve ölü bölge yüzünden. Yani bu bir ödünleşim; gürültülü ortamda değerli.
+Hesaplama maliyetini de ölçtüm: kestirici karar başına {tr(EST0, 1)} µs yerine {tr(EST1, 1)} µs sürüyor, yani ek yük
+mikrosaniyenin altında. Asıl maliyet bulanık çıkarımın kendisi: saf Python'da yaklaşık {tr(FIS_MS, 1)} ms, P&O ise
+yaklaşık {tr(PO_US, 0)} µs. Gerçek donanımda kontrol yüzeyi bir arama tablosuna dönüştürülür.
 Son olarak üçgen yerine Gauss üyelik fonksiyonu denedim: %1'de 93,3 ve sapma daha küçük.
 """)
 image(s, FIG / "noise_ablation.png", 0.6, 1.35, 7.6, 3.6)
@@ -753,7 +761,8 @@ text(s, 8.75, 4.35, 3.75, 2.3, [
     f"%{tr(nz('Proposed + F + D + C (robust)', 0.0), 2)}",
     "- Ort. yakınsama: 34 → 95 ms",
     "- Neden: filtre gecikmesi ve ölü bölge",
-], 14, space=5)
+    f"- Hesaplama: kestirici {tr(EST0, 1)} → {tr(EST1, 1)} µs/karar (FIS ≈ {tr(FIS_MS, 1)} ms)",
+], 13, space=4)
 
 # 18 — live demo
 s = slide("Canlı demo", notes="""
