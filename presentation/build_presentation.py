@@ -556,7 +556,7 @@ text(s, 0.6, 4.65, 12.1, 0.4, "Biçim: bizim değer (makalenin değeri) · Şeki
 for k, (big, small, col) in enumerate([
     (f"%{tr(pr['efficiency_pct'])}", "önerilenin verimi (makale %97,7)", TEAL),
     ("4 / 4", "ölçütte sıralama makaleyle aynı", INK),
-    ("±0,5–1", "puan mutlak fark: ortalama model, MF köşeleri", MUTED),
+    ("±0,5–1", "puan mutlak fark: ortalama model, ÜF köşeleri", MUTED),
 ]):
     x = 0.6 + k * 4.1
     text(s, x, 5.15, 3.9, 0.85, big, 40, col, True, font=HEAD)
@@ -602,7 +602,7 @@ cols = [
         "Hafif hesap, gömülü sisteme uygun",
     ]),
     ("Sınırlılıklar", AMBER, CARD_A, [
-        "MF sayısal köşeleri ve yakınsama tanımı **verilmemiş**",
+        "ÜF sayısal köşeleri ve yakınsama tanımı **verilmemiş**",
         "Yalnız simülasyon, donanım yok",
         "SInC'nin özgün olmadığı belirtilmemiş",
     ]),
@@ -685,7 +685,7 @@ text(s, 0.85, 3.4, 6.9, 2.75, [
     "- ΔI/ΔV, son referans örneğe göre ve yalnız |ΔV| ≥ δ_{V} olunca hesaplanır",
     "- Payda hiçbir zaman gürültü seviyesine inmez → **sapmanın kaynağı kesilir**",
     "- Arada SInC bir önceki değerini korur, CSI sıfıra yakın kalır",
-    "**Kural tabanı ve MF'ler değişmez** → yorumlanabilirlik korunur",
+    "**Kural tabanı ve ÜF'ler değişmez** → yorumlanabilirlik korunur",
 ], 16, space=7)
 box(s, 8.3, 3.2, 4.4, 3.0, CARD_A)
 text(s, 8.55, 3.4, 3.9, 2.75, [
@@ -752,7 +752,7 @@ text(s, 8.75, 1.65, 3.75, 2.2, [
     "**Bulgular**",
     "- F ve D birbirini tamamlıyor",
     "- C'nin **etkisi yok** (D varken SInC sınıra ulaşmıyor)",
-    f"- Gauss MF: %1'de %{tr(nz('Robust + Gaussian MF', 1.0), 1)}, daha küçük sapma",
+    f"- Gauss ÜF: %1'de %{tr(nz('Robust + Gaussian MF', 1.0), 1)}, daha küçük sapma",
 ], 14, space=5)
 box(s, 8.5, 4.15, 4.2, 2.6, CARD_A)
 text(s, 8.75, 4.35, 3.75, 2.3, [
@@ -823,11 +823,7 @@ for k, (head, lines) in enumerate(cols):
     badge(s, x + 0.25, 1.78, str(k + 1))
     text(s, x + 0.95, 1.78, 2.8, 0.5, head, 18, WHITE, True, font=HEAD, anchor=MSO_ANCHOR.MIDDLE)
     text(s, x + 0.3, 2.55, 3.3, 2.2, lines, 16, WHITE, bullets=True, space=10)
-text(s, 0.6, 5.3, 12.1, 0.8, "Teşekkürler · Sorular?", 36, AMBER, True, font=HEAD)
-text(s, 0.6, 6.55, 12.1, 0.5,
-     "Yapay zekâ kullanımı raporun “Üretken Yapay Zekâ Kullanım Beyanı” bölümünde açıklanmıştır. "
-     "Kaynaklar: references/README.md (23 kaynak, IEEE)",
-     12, RGBColor(0xA9, 0xB8, 0xCE))
+text(s, 0.6, 5.3, 12.1, 0.8, "Teşekkürler", 36, AMBER, True, font=HEAD)
 
 prs.core_properties.title = "Fotovoltaik Sistemlerde Hibrit Bulanık Mantık ile MPPT"
 prs.core_properties.author = "Yiğithan Çalışkan"

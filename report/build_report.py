@@ -521,8 +521,8 @@ def s6() -> None:
          "ikinci terim bu küçük farka böldüğü için ölçüm gürültüsünü büyütür; CSI, SInC'nin farkı olduğu için gürültüyü "
          "ikinci kez büyütür. Makale bu duyarlılığı yalnızca sözel olarak belirtmiştir. Etkiyi nicel olarak ölçmek için "
          "denetleyicinin gördüğü her örneğe sıfır ortalamalı Gauss gürültüsü eklenmiştir (tesis gürültüsüzdür):")
-    eq("V_m = V + n_V,   n_V ~ N(0, (s · V_oc)²),     I_m = I + n_I,   n_I ~ N(0, (s · I_sc)²)")
-    para("Burada s tam ölçeğe göre gürültü düzeyidir ve s ∈ {0; 0,1; 0,2; 0,5; 1} % değerleri incelenmiştir.")
+    eq("V_m = V + n_V,   n_V ~ N(0, (σ · V_oc)²),     I_m = I + n_I,   n_I ~ N(0, (σ · I_sc)²)")
+    para("Burada σ, tam ölçeğe (V_oc, I_sc) göre bağıl gürültü düzeyidir; σ ∈ {%0; %0,1; %0,2; %0,5; %1} değerleri incelenmiştir.")
     h("6.2 Sapmanın mekanizması", 2)
     para("ΔV gürültü düzeyine indiğinde artımsal terim sıfır ortalamalı ama ağır kuyruklu bir orana dönüşür ve "
          "SInC ≈ I/V + Δn_I/Δn_V olur. I/V her zaman pozitif olduğundan denetleyici sistematik olarak \"MPP'nin "
@@ -552,13 +552,13 @@ def s7() -> None:
         ["Donanım", "Intel Core i7-14650HX, 32 GB RAM, Windows 11 Pro"],
         ["Yazılım", "Python 3.14.6; NumPy 2.5.4 [@numpy], SciPy 1.18.1 [@scipy], scikit-fuzzy 0.5.0, pandas 3.1.1, matplotlib 3.11.2"],
         ["Tesis", "SPR-210 tek diyot modeli (n = 1), ortalama boost modeli, dt = 10 µs, ileri Euler"],
-        ["Denetleyici", "T_s = 1 ms, D_0 = 0,1, 0,05 ≤ D ≤ 0,95"],
+        ["Denetleyici", "T_s = 1 ms; D_0 = 0,1; 0,05 ≤ D ≤ 0,95"],
         ["Senaryolar", "Işınım basamakları (2 s, 25 °C); yük basamakları 50→20→35 Ω (0,6 s; 1000 ve 500 W/m²)"],
-        ["Gürültü deneyi", "s = 0, 0,1, 0,2, 0,5, 1 % tam ölçek; 5 tohum (0–4); ayar tohumları 100–102"],
+        ["Gürültü deneyi", "σ = %0; %0,1; %0,2; %0,5; %1 (tam ölçek); 5 tohum (0–4); ayar tohumları 100–102"],
         ["Ölçütler", "η = ΣP_pv/ΣP_opt; RMSE; RMS%; yakınsama süresi (±%2 bant); görev oranı titreşimi"],
         ["Çalışma süresi", "2 s'lik bir benzetim ≈ 1–2 s; tüm gürültü deneyi ≈ 1 dk (paralel)"],
         ["Karar süresi ölçümü", "update(V, I) çağrısı başına time.perf_counter_ns; ışınım profili, 5 tohum × 1999 "
-         "karar, s = 0 ve %1; yalnızca denetleyici ölçülür, tesis benzetimi hariç"],
+         "karar, σ = 0 ve %1; yalnızca denetleyici ölçülür, tesis benzetimi hariç"],
     ], "Deney ortamı ve parametreleri.", [3.2, 12.8], font_size=8.5)
     para("Tüm sonuçlar README'deki komutlarla yeniden üretilebilir; 23 birim testi model, kural tabanı, ölçütler ve "
          "kestirici için temel doğrulamaları yapar (pytest).", indent=True)
@@ -614,26 +614,26 @@ def s8() -> None:
             m, s = eff(v, lv), effstd(v, lv)
             row.append(f(m) if lv == 0 else f"{f(m)} ± {f(s)}")
         rows.append(row)
-    table(["Denetleyici", "s = 0", "s = 0,2 %", "s = 0,5 %", "s = 1 %"], rows,
+    table(["Denetleyici", "σ = 0", "σ = %0,2", "σ = %0,5", "σ = %1"], rows,
           "Ölçüm gürültüsü altında ortalama MPPT verimi (%), 5 tohum ortalaması ± standart sapma.",
           [5.2, 2.0, 2.9, 2.9, 2.9], bold_rows=(7,))
-    para(f"Gürültüsüz durumda en iyi olan önerilen denetleyici, s = %1'de %{N['n1']} ± {N['n1s']} verime düşmektedir; "
-         f"bu düzeyde tek girdili Alg. 3'ün (%{N['a31']}) bile gerisindedir. P&O ve InC s = %0,5'te yaklaşık %40'a "
-         f"çöker (P&O %{N['po05']}). Dayanıklı kestirici ile önerilen denetleyici s = %0,5'te %{N['r05']}, s = %1'de "
-         f"%{N['r1']} ± {N['r1s']} verime ulaşır (Şekil 7, 9). Aynı kestiricinin verildiği Alg. 3, s = %1'de "
-         f"%{N['a3r1']} ile en dayanıklı denetleyicidir; yalnızca filtre takılan P&O ve InC ise s = %0,5'in üzerinde "
+    para(f"Gürültüsüz durumda en iyi olan önerilen denetleyici, σ = %1'de %{N['n1']} ± {N['n1s']} verime düşmektedir; "
+         f"bu düzeyde tek girdili Alg. 3'ün (%{N['a31']}) bile gerisindedir. P&O ve InC σ = %0,5'te yaklaşık %40'a "
+         f"çöker (P&O %{N['po05']}). Dayanıklı kestirici ile önerilen denetleyici σ = %0,5'te %{N['r05']}, σ = %1'de "
+         f"%{N['r1']} ± {N['r1s']} verime ulaşır (Şekil 7, 9). Aynı kestiricinin verildiği Alg. 3, σ = %1'de "
+         f"%{N['a3r1']} ile en dayanıklı denetleyicidir; yalnızca filtre takılan P&O ve InC ise σ = %0,5'in üzerinde "
          "toparlanamaz.", indent=True)
     figure("noise_efficiency_vs_level.png", "Gürültü düzeyine karşı ortalama verim (kesikli: makaledeki biçim, sürekli: "
            "dayanıklı/filtreli biçim).", 13.0)
-    para("**Ablasyon.** s = %1'de yalnız F %" + N["F1"] + ", yalnız D %" + N["D1"] + " verim verirken ikisi birlikte %"
+    para("**Ablasyon.** σ = %1'de yalnız F %" + N["F1"] + ", yalnız D %" + N["D1"] + " verim verirken ikisi birlikte %"
          + N["r1"] + " verir; bileşenler birbirini tamamlar (Şekil 8). C bileşeninin tek başına (%" + N["C1"] + ") ve "
          "F + D üzerine eklendiğinde ölçülebilir bir etkisi yoktur: ölü bölge paydayı sınırladığında SInC kırpma "
-         "sınırına ulaşmaz. Gauss ÜF'ler s = %1'de verimi %" + N["g1"] + " ± " + N["g1s"] + " düzeyine taşıyarak "
+         "sınırına ulaşmaz. Gauss ÜF'ler σ = %1'de verimi %" + N["g1"] + " ± " + N["g1s"] + " düzeyine taşıyarak "
          "değişkenliği azaltır, gürültüsüz durumda ise biraz geride kalır. Gürültüsüz durumda dayanıklı kestiricinin "
          f"bedeli %{N['n0']} → %{N['r0']} verim ve {N['conv_prop']} → {N['conv_r']} ms ortalama yakınsama süresidir.",
          indent=True)
     figure("noise_ablation.png", "Dayanıklı kestiricinin ablasyonu (F: EMA filtresi, D: ölü bölge, C: kırpma).", 14.5)
-    figure("noise_timeseries_0p5pct.png", "s = %0,5 gürültüde makaledeki denetleyici (sol) ve dayanıklı kestiricili "
+    figure("noise_timeseries_0p5pct.png", "σ = %0,5 gürültüde makaledeki denetleyici (sol) ve dayanıklı kestiricili "
            "denetleyici (sağ).", 15.5)
 
     h("8.5 Baseline ile karşılaştırma özeti ve hesaplama maliyeti", 2)
@@ -644,19 +644,19 @@ def s8() -> None:
     rows = []
     for lv, lab in ((0.0, "0"), (0.5, "%0,5"), (1.0, "%1")):
         x0, x1 = ns_val(b, lv, "efficiency_mean"), ns_val(r, lv, "efficiency_mean")
-        rows.append([f"Verim (%), s = {lab}", f(x0), f(x1), delta(x0, x1, "puan")])
+        rows.append([f"Verim (%), σ = {lab}", f(x0), f(x1), delta(x0, x1, "puan")])
     for lv, lab in ((0.0, "0"), (1.0, "%1")):
         x0, x1 = ns_val(b, lv, "rmse_mean"), ns_val(r, lv, "rmse_mean")
-        rows.append([f"RMSE (W), s = {lab}", f(x0), f(x1), delta(x0, x1, "W")])
+        rows.append([f"RMSE (W), σ = {lab}", f(x0), f(x1), delta(x0, x1, "W")])
     x0, x1 = conv0(b), conv0(r)
-    rows.append(["Ort. yakınsama (ms), s = 0", f(x0, 1), f(x1, 1), delta(x0, x1, "ms", 1)])
+    rows.append(["Ort. yakınsama (ms), σ = 0", f(x0, 1), f(x1, 1), delta(x0, x1, "ms", 1)])
     e0, e1 = et_val("flc_sinc_csi", 0.0, "estimator_median_us"), et_val("prop+FDC", 0.0, "estimator_median_us")
     rows.append(["SInC/CSI kestirimi (µs/karar)", f(e0, 1), f(e1, 1), delta(e0, e1, "µs", 1)])
     t0, t1 = et_val("flc_sinc_csi", 0.0), et_val("prop+FDC", 0.0)
     rows.append(["Toplam karar süresi (µs, medyan)", f(t0, 0), f(t1, 0), "ölçüm değişkenliği içinde"])
     table(["Ölçüt", "Önerilen (makale)", "Önerilen + dayanıklı", "Değişim"], rows,
           "Baseline (makaledeki önerilen denetleyici) ile dayanıklı kestiricili sürümün karşılaştırması "
-          "(gürültülü satırlar 5 tohum ortalaması; süreler s = 0).", [5.6, 3.2, 3.6, 3.6], font_size=9)
+          "(gürültülü satırlar 5 tohum ortalaması; süreler σ = 0).", [5.6, 3.2, 3.6, 3.6], font_size=9)
     names = [("po", "P&O"), ("inc", "InC"), ("flc_sinc", "Alg. 3 (SInC)"), ("flc_sinc_csi", "Önerilen (SInC+CSI)"),
              ("alg3+FDC", "Alg. 3 + dayanıklı"), ("prop+FDC", "Önerilen + dayanıklı")]
     rows = []
@@ -664,7 +664,7 @@ def s8() -> None:
         est = et_val(k, 0.0, "estimator_median_us") if k not in ("po", "inc") else float("nan")
         rows.append([name, f(et_val(k, 0.0), 1), f(et_val(k, 0.0, "p95_us"), 1), f(et_val(k, 1.0), 1),
                      "–" if est != est else f(est, 1)])
-    table(["Denetleyici", "Medyan, s = 0", "p95, s = 0", "Medyan, s = %1", "Kestirici"], rows,
+    table(["Denetleyici", "Medyan, σ = 0", "p95, σ = 0", "Medyan, σ = %1", "Kestirici"], rows,
           "MPPT karar süresi (µs/karar), saf Python, 5 × 1999 çağrı.", [4.6, 2.7, 2.7, 3.0, 2.6], font_size=9)
     ratio = et_val("flc_sinc_csi", 0.0) / et_val("po", 0.0)
     fis_lo = min(et_val(k, lv) for k in ("flc_sinc", "flc_sinc_csi", "alg3+FDC", "prop+FDC") for lv in (0.0, 1.0))
@@ -690,7 +690,7 @@ def s9() -> None:
     para("CSI girdisinin etkisi koşula bağlıdır. Gürültüsüz durumda CSI, düşük ışınımda MPP'nin solunda kalan "
          "noktalar için adımı büyüterek belirgin bir hız kazandırır. Gürültü altında ise CSI, zaten gürültülü olan "
          "SInC'nin farkı olduğu için ek bir gürültü kaynağına dönüşür; dayanıklı kestirici kullanıldığında bile tek "
-         "girdili Alg. 3'ün s = %1'de daha iyi olması bunu gösterir. Bu bulgu, girdi seçiminin yalnızca ideal ölçüm "
+         "girdili Alg. 3'ün σ = %1'de daha iyi olması bunu gösterir. Bu bulgu, girdi seçiminin yalnızca ideal ölçüm "
          "koşulunda değil, sensör kalitesiyle birlikte değerlendirilmesi gerektiğine işaret eder.", indent=True)
     para("Literatürde gürültüye karşı genellikle Type-2 bulanık mantık [@vidal,@boudia] veya sinir ağları "
          "[@intravaia] önerilmektedir. Bu çalışmadaki yaklaşım kural tabanını ve çıkarım tipini değiştirmeden, yalnızca "
