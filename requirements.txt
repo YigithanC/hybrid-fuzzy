@@ -1,10 +1,11 @@
-# Python 3.11+ recommended. Pin exact versions with `pip freeze` once the environment works.
-numpy>=1.26
-scipy>=1.11
-scikit-fuzzy>=0.5.0
-networkx>=3.2          # required by skfuzzy.control, not pulled in automatically
-matplotlib>=3.8
-pandas>=2.1
-pytest>=8.0
-python-docx>=1.1       # only for building report/report.docx (report/build_report.py)
-python-pptx>=1.0       # only for building presentation/presentation.pptx
+# Python 3.11+ required. All results in the report were produced with Python 3.14.6 and the
+# versions in the comments ("tested"); newer versions within the same major release should work.
+numpy>=1.26            # tested 2.5.4
+scipy>=1.11            # tested 1.18.1
+scikit-fuzzy>=0.5.0    # tested 0.5.0
+networkx>=3.2          # tested 3.7; required by skfuzzy.control, not pulled in automatically
+matplotlib>=3.8        # tested 3.11.2
+pandas>=2.1            # tested 3.1.1
+pytest>=8.0            # tested 9.2.0
+python-docx>=1.1       # tested 1.2.0; only for building report/report.docx (report/build_report.py)
+python-pptx>=1.0       # tested 1.0.2; only for building presentation/presentation.pptx
