@@ -340,7 +340,7 @@ lit = [
      "P&O, PSO, ACO'dan iyi"],
     ["Boudia vd., 2025", "Type-2 FLC", "Belirsizlik ayak izi", "Simülasyon",
      "Type-1'den hızlı, az salınım"],
-    ["Intravaia vd., 2024", "Gürültü analizi", "P&O, InC, YSA", "Simülasyon",
+    ["Intravaia vd., 2024", "Gürültü analizi", "P&O, InC, YSA", "Duyarlılık analizi",
      "Belirsizlikte YSA en iyi"],
     ["**Melhaoui vd., 2025**", "InC + Mamdani", "**SInC + CSI**, 35 kural", "Simulink",
      "%97,7 verim, 53,5 ms"],
@@ -592,7 +592,7 @@ Sınırlılıklar: üyelik fonksiyonlarının sayısal değerleri verilmemiş, b
 üretmek mümkün değil. Yakınsama süresi tanımlanmamış. Sadece simülasyon var, donanım yok.
 Kısmi gölgelenmede güç eğrisi çok tepeli olur; SInC yerel tepede de sıfırdır, yani global MPP'yi
 kaçırabilir. Bu test edilmemiş.
-En önemlisi: makale kendi sonuç bölümünde ölçüm hassasiyetine ve bölmeye duyarlılığı bir sınırlılık
+En önemlisi: makale sonuçları tartıştığı bölümde ve Tablo 8'de ölçüm hassasiyetine ve bölmeye duyarlılığı bir sınırlılık
 olarak yazıyor ama hiç test etmiyor. Benim katkım tam buradan çıkıyor.
 """)
 cols = [

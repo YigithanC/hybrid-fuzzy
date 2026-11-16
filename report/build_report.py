@@ -38,7 +38,7 @@ REFS = {
     "mamdani": 'E. H. Mamdani and S. Assilian, "An experiment in linguistic synthesis with a fuzzy logic controller," Int. J. Man-Mach. Stud., vol. 7, no. 1, pp. 1–13, 1975, doi: 10.1016/S0020-7373(75)80002-2.',
     "esram": 'T. Esram and P. L. Chapman, "Comparison of photovoltaic array maximum power point tracking techniques," IEEE Trans. Energy Convers., vol. 22, no. 2, pp. 439–449, 2007, doi: 10.1109/TEC.2006.874230.',
     "bhatnagar": 'P. Bhatnagar and R. K. Nema, "Maximum power point tracking control techniques: State-of-the-art in photovoltaic applications," Renew. Sustain. Energy Rev., vol. 23, pp. 224–241, 2013, doi: 10.1016/j.rser.2013.02.011.',
-    "bollipo": 'R. B. Bollipo, S. Mikkili, and P. K. Bonthagorla, "Hybrid, optimization, intelligent and classical PV MPPT techniques: Review," CSEE J. Power Energy Syst., vol. 7, no. 1, pp. 9–33, 2020, doi: 10.17775/CSEEJPES.2019.02720.',
+    "bollipo": 'R. B. Bollipo, S. Mikkili, and P. K. Bonthagorla, "Hybrid, optimal, intelligent and classical PV MPPT techniques: A review," CSEE J. Power Energy Syst., vol. 7, no. 1, pp. 9–33, Jan. 2021, doi: 10.17775/CSEEJPES.2019.02720.',
     "vidal": 'R. Vidal-Martínez, J. R. García-Martínez, R. Rojas-Galván, J. M. Álvarez-Alvarado, M. Gozález-Lee, and J. Rodríguez-Reséndiz, "A review of Mamdani, Takagi–Sugeno, and Type-2 fuzzy controllers for MPPT and power management in photovoltaic systems," Technologies, vol. 13, no. 9, Art. no. 422, 2025, doi: 10.3390/technologies13090422.',
     "femia": 'N. Femia, G. Petrone, G. Spagnuolo, and M. Vitelli, "Optimization of perturb and observe maximum power point tracking method," IEEE Trans. Power Electron., vol. 20, no. 4, pp. 963–973, 2005, doi: 10.1109/TPEL.2005.850975.',
     "elgendy12": 'M. A. Elgendy, B. Zahawi, and D. J. Atkinson, "Assessment of perturb and observe MPPT algorithm implementation techniques for PV pumping applications," IEEE Trans. Sustain. Energy, vol. 3, no. 1, pp. 21–33, 2012, doi: 10.1109/TSTE.2011.2168245.',
@@ -356,8 +356,8 @@ def s1() -> None:
          "model gerektirmez [@shiau,@robles].", indent=True)
     para("Referans makale [@melhaoui], InC koşulunu bulanık denetleyiciye taşıyan dört hibrit FLC'yi karşılaştırır ve "
          "SInC ile CSI girdilerini kullanan yeni bir denetleyici önerir. Makale, MATLAB/Simulink benzetiminde %97,7 "
-         "ortalama verim ve 53,5 ms yakınsama süresi raporlar; ancak sonuç bölümünde yöntemin ölçüm hassasiyetine ve "
-         "bölme işlemine duyarlı olduğunu belirtir ve bu duyarlılığı test etmez. Bu proje bu boşluktan hareket eder.",
+         "ortalama verim ve 53,5 ms yakınsama süresi raporlar; ancak sonuçları tartıştığı bölümde ve Tablo 8'de yöntemin ölçüm "
+         "hassasiyetine ve bölme işlemine duyarlı olduğunu belirtir ve bu duyarlılığı test etmez. Bu proje bu boşluktan hareket eder.",
          indent=True)
     para("Projenin kapsamı ve katkıları şunlardır:")
     bullets([
@@ -390,8 +390,8 @@ def s2() -> None:
          "bulanık MPPT'nin PI tabanlı şarj denetimiyle birlikte kullanılabileceğini gösterir. Metasezgisel ve "
          "nöro-bulanık hibritler [@ali,@priyadarshi] ile aralık Type-2 [@altin] ve Type-2 [@boudia] bulanık "
          "denetleyiciler de önerilmiştir. Vidal-Martínez vd. [@vidal] son on yıldaki bulanık PV denetleyicilerinin "
-         "%54,2'sinin Mamdani, %26,7'sinin Takagi–Sugeno, %19,1'inin Type-2 olduğunu ve Type-2 yapıların sensör "
-         "gürültüsüne karşı tercih edildiğini belirtir.", indent=True)
+         "%54,2'sinin Mamdani, %26,7'sinin Takagi–Sugeno, %19,1'inin Type-2 olduğunu ve Type-2 yapıların belirsizlik "
+         "ayak izi (FOU) ile sensör gürültüsünü ele aldığını belirtir.", indent=True)
     para("**Ölçüm belirsizliği.** Intravaia vd. [@intravaia] P&O, InC ve yapay sinir ağı izleyicilerinin ölçüm "
          "gürültüsüne duyarlılığını karşılaştırır ve belirsizlik altında sinir ağının daha dayanıklı olduğunu bulur. "
          "Bu çalışma ise SInC+CSI tabanlı bulanık denetleyicinin gürültü duyarlılığını ölçer ve kural tabanını veya "
@@ -402,7 +402,7 @@ def s2() -> None:
         ["Robles Algarín vd. [@robles], 2017", "Mamdani FLC", "–", "Simulink, 65 W", "P&O'dan hızlı, az salınımlı"],
         ["Priyadarshi vd. [@priyadarshi], 2020", "ANFIS + PSO", "Nöro-bulanık", "dSPACE deney", "P&O, PSO, ACO, ABC'den üstün"],
         ["Boudia vd. [@boudia], 2025", "Type-2 FLC", "Dinamik referans gerilim hatası", "Benzetim", "Type-1'den hızlı, az salınımlı"],
-        ["Intravaia vd. [@intravaia], 2024", "Gürültü analizi", "P&O, InC, YSA", "Benzetim", "Belirsizlikte YSA en dayanıklı"],
+        ["Intravaia vd. [@intravaia], 2024", "Gürültü analizi", "P&O, InC, YSA", "Duyarlılık analizi", "Belirsizlikte YSA en dayanıklı"],
         ["Melhaoui vd. [@melhaoui], 2025", "InC + Mamdani", "SInC + CSI", "Simulink, SPR-210", "%97,7 verim, 53,5 ms"],
         ["Bu çalışma", "[@melhaoui] + dayanıklı kestirici", "SInC + CSI, EMA + ölü bölge", "Python",
          f"%{N['r1']} verim (%1 gürültü)"],
@@ -467,7 +467,7 @@ def s4() -> None:
 
 def s5() -> None:
     h("5. Yeniden Üretim Yöntemi (Reproduction Methodology)")
-    para("Makalenin yazarları kodlarını paylaşmamıştır; tüm sistem bu proje kapsamında Python'da sıfırdan "
+    para("Makalenin kodları yayımlanmamıştır (veriler yalnızca yazardan istek üzerine); tüm sistem bu proje kapsamında Python'da sıfırdan "
          "yazılmıştır (Şekil 1). Kaynak kod `src/` klasöründe, deney betikleri `experiments/` klasöründedir.", indent=True)
     figure("system_diagram.png", "Yeniden üretilen sistemin blok diyagramı.", 15.0)
     h("5.1 PV modeli", 2)
@@ -739,8 +739,9 @@ def disclosure() -> None:
          "makaleden parametre ve tabloların çıkarılması, PV/dönüştürücü modeli, bulanık çıkarım motoru, denetleyiciler "
          "ve deney betiklerinin yazılması, hata ayıklama, ızgara taramalarının tasarlanması, literatür taramasında "
          "aday kaynakların bulunması ve raporun ilk taslağının yazılması. Tüm kaynakların DOI, başlık, yazar ve "
-         "yayın bilgileri Crossref üzerinden doğrulanmış; yalnızca okunan düzeyde (tam metin veya özet) iddialar "
-         "kullanılmıştır (references/README.md). Raporlanan tüm sayılar depodaki betiklerin çıktılarından otomatik "
+         "yayın bilgileri Crossref üzerinden (erken erişim kaydı bulunan [@bollipo] için ayrıca DOAJ üzerinden) "
+         "doğrulanmış; yalnızca okunan düzeyde (tam metin veya özet) iddialar kullanılmıştır (references/README.md). "
+         "Makaleden alınan tüm sayılar ve kural tablosu makalenin PDF'i ile ayrıca karşılaştırılmıştır. Raporlanan tüm sayılar depodaki betiklerin çıktılarından otomatik "
          "olarak alınmıştır. Proje kapsamı, katkı türü ve tasarım tercihleri öğrenci tarafından belirlenmiş; kod, "
          "sonuçlar ve bu rapor öğrenci tarafından incelenmiştir ve içerikten öğrenci sorumludur.", indent=True)
 

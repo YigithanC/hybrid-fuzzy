@@ -31,7 +31,7 @@ Aşağıdaki ifadeler o dosyadaki "Read" sütununun izin verdiği düzeyde tutul
 
 ### 1.4 Ölçüm belirsizliği ve gürültü (katkımızın dayanağı)
 - Intravaia vd. [20], ölçüm belirsizliğinin MPP hesabına etkisini inceler. P&O, InC ve yapay sinir ağı izleyicilerinin gürültüye duyarlılığını karşılaştırır ve belirsizlik altında sinir ağının daha iyi olduğunu bulur.
-- Referans makale [1] kendi sonuç bölümünde ölçüm hassasiyetine ve bölme işlemine duyarlılığı bir sınırlılık olarak belirtir ama bunu **test etmez**.
+- Referans makale [1] sonuçları tartıştığı bölümde ve Tablo 8'de ölçüm hassasiyetine ve bölme işlemine duyarlılığı bir sınırlılık olarak belirtir ama bunu **test etmez**.
 - **Bizim katkımız** bu boşluğu doldurur. SInC + CSI denetleyicisinin gürültü altında nasıl bozulduğunu nicel olarak ölçüyoruz ve bunu bulanık kuralları değiştirmeden, sadece girdi kestirimini iyileştirerek düzeltiyoruz.
   Bu yaklaşım Type-2'ye geçmekten [7], [18], [19] daha basit ve hesaplama açısından daha ucuz bir alternatif.
 
@@ -41,12 +41,12 @@ Aşağıdaki ifadeler o dosyadaki "Read" sütununun izin verdiği düzeyde tutul
 |---|---|---|---|---|---|
 | Shiau vd. [13] | 2015 | 6 farklı bulanık MPPT | Eğim ve değişimi, ΔP ve ΔV, **SInC (tek girdi)**, açı toplamı | Simülasyon, buck-boost | Her girdinin artı ve eksileri; açı tabanlı girdinin aralığı sonlu |
 | Robles Algarín vd. [14] | 2017 | Mamdani bulanık MPPT ve P&O | – | Simulink, 65 W, buck | Bulanık MPPT'nin oturma süresi, güç kaybı ve salınımı P&O'dan daha iyi |
-| Altin [18] | 2013 | Aralık Type-2 bulanık MPPT | – | Simülasyon | Type-2 MPPT önerisi |
+| Altin [18] | 2013 | Aralık Type-2 bulanık MPPT | – | – (özet kısmen okundu) | Type-2 MPPT önerisi |
 | Priyadarshi vd. [17] | 2020 | ANFIS + PSO | Nöro-bulanık | dSPACE deney | P&O, PSO, ACO ve ABC'ye göre üstün; "sıfır salınım" iddiası |
-| Ali vd. [16] | 2022 | Yarasa algoritması + bulanık | Metasezgisel ayar | Simülasyon | Değişken atmosfer koşullarında hibrit MPPT |
+| Ali vd. [16] | 2022 | Yarasa algoritması + bulanık | Metasezgisel ayar | – (özet okunmadı) | Değişken atmosfer koşullarında hibrit MPPT |
 | Boudia vd. [19] | 2025 | Type-2 bulanık MPPT | Dinamik referans gerilime göre hata | Simülasyon | Type-2, Type-1'den daha hızlı ve daha az salınımlı |
 | Djilali vd. [12] | 2025 | Değişken adımlı P&O | Bulanık değil | MATLAB | Güç dalgalanmasında %80 azalma; yanıt süresinde %30 iyileşme |
-| Intravaia vd. [20] | 2024 | Gürültü duyarlılık analizi | P&O, InC, yapay sinir ağı | Simülasyon | Belirsizlik altında yapay sinir ağı en dayanıklı |
+| Intravaia vd. [20] | 2024 | Gürültü duyarlılık analizi | P&O, InC, yapay sinir ağı | Duyarlılık analizi | Belirsizlik altında yapay sinir ağı en dayanıklı |
 | **Melhaoui vd. [1]** | 2025 | InC + Mamdani bulanık | **SInC + CSI** | Simulink, SPR-210, boost | %97.7 verim, 53.5 ms yakınsama |
 | **Bu çalışma** | 2026 | [1]'in yeniden üretimi + dayanıklı SInC kestiricisi | SInC + CSI, EMA filtre + ölü bölge | Python, ortalama model | Yeniden üretim %98.2; %1 gürültüde verim %46.5'ten %92.6'ya |
 

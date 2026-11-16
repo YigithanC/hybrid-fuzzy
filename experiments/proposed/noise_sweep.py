@@ -1,6 +1,6 @@
 """Extension experiment: robustness of the MPPT controllers to measurement noise.
 
-Motivation: the paper's conclusion says that the SInC controller "remains
+Motivation: the paper's results discussion says that the SInC controller "remains
 sensitive to measurement accuracy and division calculations" but it never
 tests this. SInC uses dI/dV = (I[k]-I[k-1]) / (V[k]-V[k-1]); near the MPP
 the voltage change per sample is only tens of mV, so small sensor noise on

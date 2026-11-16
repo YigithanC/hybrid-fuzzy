@@ -1,6 +1,6 @@
 # References (IEEE)
 
-Every entry below was checked on 2026-11-12 against Crossref, which confirms the DOI, title, authors, venue, volume and pages.
+Every entry below was checked on 2026-11-12 against Crossref, which confirms the DOI, title, authors, venue, volume and pages. All 23 entries were re-checked on 2026-11-16 (see the note on [6]), and the abstract-level claims in the report were compared with the abstracts again.
 The "Read" column records how much of each work was actually read for this project. Only claims supported at that level are made in the report.
 
 - **full:** the full text was read
@@ -14,7 +14,7 @@ The "Read" column records how much of each work was actually read for this proje
 | [3] | E. H. Mamdani and S. Assilian, "An experiment in linguistic synthesis with a fuzzy logic controller," *Int. J. Man-Mach. Stud.*, vol. 7, no. 1, pp. 1–13, 1975, doi: 10.1016/S0020-7373(75)80002-2. | summary |
 | [4] | T. Esram and P. L. Chapman, "Comparison of photovoltaic array maximum power point tracking techniques," *IEEE Trans. Energy Convers.*, vol. 22, no. 2, pp. 439–449, 2007, doi: 10.1109/TEC.2006.874230. | summary |
 | [5] | P. Bhatnagar and R. K. Nema, "Maximum power point tracking control techniques: State-of-the-art in photovoltaic applications," *Renew. Sustain. Energy Rev.*, vol. 23, pp. 224–241, 2013, doi: 10.1016/j.rser.2013.02.011. | summary |
-| [6] | R. B. Bollipo, S. Mikkili, and P. K. Bonthagorla, "Hybrid, optimization, intelligent and classical PV MPPT techniques: Review," *CSEE J. Power Energy Syst.*, vol. 7, no. 1, pp. 9–33, 2020, doi: 10.17775/CSEEJPES.2019.02720. | abstract |
+| [6] | R. B. Bollipo, S. Mikkili, and P. K. Bonthagorla, "Hybrid, optimal, intelligent and classical PV MPPT techniques: A review," *CSEE J. Power Energy Syst.*, vol. 7, no. 1, pp. 9–33, Jan. 2021, doi: 10.17775/CSEEJPES.2019.02720. | abstract |
 | [7] | R. Vidal-Martínez, J. R. García-Martínez, R. Rojas-Galván, J. M. Álvarez-Alvarado, M. Gozález-Lee, and J. Rodríguez-Reséndiz, "A review of Mamdani, Takagi–Sugeno, and Type-2 fuzzy controllers for MPPT and power management in photovoltaic systems," *Technologies*, vol. 13, no. 9, Art. no. 422, 2025, doi: 10.3390/technologies13090422. | abstract |
 | [8] | N. Femia, G. Petrone, G. Spagnuolo, and M. Vitelli, "Optimization of perturb and observe maximum power point tracking method," *IEEE Trans. Power Electron.*, vol. 20, no. 4, pp. 963–973, 2005, doi: 10.1109/TPEL.2005.850975. | summary |
 | [9] | M. A. Elgendy, B. Zahawi, and D. J. Atkinson, "Assessment of perturb and observe MPPT algorithm implementation techniques for PV pumping applications," *IEEE Trans. Sustain. Energy*, vol. 3, no. 1, pp. 21–33, 2012, doi: 10.1109/TSTE.2011.2168245. | summary |
@@ -35,4 +35,4 @@ The "Read" column records how much of each work was actually read for this proje
 
 Software (no paper): scikit-fuzzy 0.5.0 (https://github.com/scikit-fuzzy/scikit-fuzzy) and matplotlib.
 
-Note on [6]: Crossref confirms the DOI, the title and the year 2020, but has no volume or page data. Volume 7, issue 1 and pages 9–33 are taken from the reference list of [1]. Check them on the journal page before final submission.
+Note on [6]: Crossref holds only the early-access record (2020, title "Hybrid, optimization, intelligent and classical PV MPPT techniques: Review", no volume or pages). The published version was checked on 2026-11-16 in the DOAJ record of the same DOI: title "Hybrid, optimal, intelligent and classical PV MPPT techniques: A review", vol. 7, no. 1, pp. 9–33, January 2021. The entry above follows the published version.

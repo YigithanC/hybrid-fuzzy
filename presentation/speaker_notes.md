@@ -129,7 +129,7 @@ Sınırlılıklar: üyelik fonksiyonlarının sayısal değerleri verilmemiş, b
 üretmek mümkün değil. Yakınsama süresi tanımlanmamış. Sadece simülasyon var, donanım yok.
 Kısmi gölgelenmede güç eğrisi çok tepeli olur; SInC yerel tepede de sıfırdır, yani global MPP'yi
 kaçırabilir. Bu test edilmemiş.
-En önemlisi: makale kendi sonuç bölümünde ölçüm hassasiyetine ve bölmeye duyarlılığı bir sınırlılık
+En önemlisi: makale sonuçları tartıştığı bölümde ve Tablo 8'de ölçüm hassasiyetine ve bölmeye duyarlılığı bir sınırlılık
 olarak yazıyor ama hiç test etmiyor. Benim katkım tam buradan çıkıyor.
 
 ## 14. Özgün katkı: gürültüye çok duyarlı bir denetleyici

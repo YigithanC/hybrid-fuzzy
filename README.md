@@ -119,7 +119,7 @@ Forward Euler with a 10 µs step. The MPPT period is 1 ms.
 
 ## Proposed Extension: noise-robust SInC estimation
 
-**Why.** The paper's own conclusion says the method "remains sensitive to the precision of measurement instruments" and to the division in dI/dV, but it never tests this.
+**Why.** In its results discussion (and its Table 8) the paper says the method "remains sensitive to the precision of measurement instruments" and to the division in dI/dV, but it never tests this.
 Near the MPP the voltage change per MPPT sample is only tens of mV, so a few tenths of a percent of sensor noise is enough to flip the sign of SInC.
 CSI is a difference of SInC, so it amplifies the noise again.
 
