@@ -28,6 +28,8 @@ TAB = ROOT / "results" / "tables"
 
 ALGOS = ["po", "inc", "flc_sinc", "flc_sinc_csi"]
 LABELS = {"po": "P&O", "inc": "InC", "flc_sinc": "Alg. 3 (SInC)", "flc_sinc_csi": "Proposed (SInC+CSI)"}
+# Turkish names for the figures only (LABELS stays English: it is the key in the CSV tables the report reads).
+LABELS_TR = {"po": "P&O", "inc": "InC", "flc_sinc": "Alg. 3 (SInC)", "flc_sinc_csi": "Önerilen (SInC+CSI)"}
 
 PAPER_T6 = {  # efficiency %, conv avg ms, RMSE, RMS %
     "po": (95.41, 65.0, 8.98, 96.34), "inc": (95.6, 60.0, 8.9, 96.4),
@@ -53,12 +55,12 @@ def table6() -> pd.DataFrame:
         lg = logs[a]
         ax[r, 0].plot(lg["t"], lg["p_pv"], "k", lw=0.8, label="P_pv")
         ax[r, 0].plot(lg["t"], lg["p_opt"], "r:", label="P_opt")
-        ax[r, 0].set_ylabel(f"{LABELS[a]}\nP (W)")
+        ax[r, 0].set_ylabel(f"{LABELS_TR[a]}\nP (W)")
         ax[r, 1].plot(lg["t"], lg["d"], lw=0.8)
         ax[r, 1].set_ylabel("D")
     ax[0, 0].legend(loc="upper left")
-    ax[-1, 0].set_xlabel("Time (s)"); ax[-1, 1].set_xlabel("Time (s)")
-    fig.suptitle("Fig. 17 irradiance profile, 25 °C: PV power and duty cycle (cf. paper Figs. 18–22)")
+    ax[-1, 0].set_xlabel("Zaman (s)"); ax[-1, 1].set_xlabel("Zaman (s)")
+    fig.suptitle("Makale Şekil 17 ışınım profili, 25 °C: panel gücü ve görev oranı (karş. makale Şekil 18–22)")
     fig.tight_layout()
     fig.savefig(FIG / "table6_power_duty.png", dpi=150)
     return pd.DataFrame(rows)
@@ -74,11 +76,11 @@ def table7() -> pd.DataFrame:
             s = summarize(lg, [0.0, 0.2, 0.4])
             p = PAPER_T7[(g, a)]
             rows.append({"G": g, "algorithm": LABELS[a], **s, "paper_rmse_w": p[0], "paper_rms_pct": p[1]})
-            ax[0].plot(lg["t"], lg["p_pv"], lw=0.8, label=LABELS[a])
-            ax[1].plot(lg["t"], lg["d"], lw=0.8, label=LABELS[a])
+            ax[0].plot(lg["t"], lg["p_pv"], lw=0.8, label=LABELS_TR[a])
+            ax[1].plot(lg["t"], lg["d"], lw=0.8, label=LABELS_TR[a])
         ax[0].plot(lg["t"], lg["p_opt"], "r:", label="P_opt")
-        ax[0].set_ylabel("P (W)"); ax[1].set_ylabel("D"); ax[1].set_xlabel("Time (s)")
-        ax[0].legend(); ax[0].set_title(f"Load steps 50→20→35 Ω at G = {g} W/m² (cf. paper Figs. 24–25)")
+        ax[0].set_ylabel("P (W)"); ax[1].set_ylabel("D"); ax[1].set_xlabel("Zaman (s)")
+        ax[0].legend(); ax[0].set_title(f"G = {g} W/m² ışınımda yük basamakları 50→20→35 Ω (karş. makale Şekil 24–25)")
         fig.tight_layout()
         fig.savefig(FIG / f"table7_load_{g}.png", dpi=150)
     return pd.DataFrame(rows)

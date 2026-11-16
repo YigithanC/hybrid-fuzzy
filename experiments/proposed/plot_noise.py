@@ -29,6 +29,19 @@ LABEL = {
     "prop+C": "Proposed + C", "prop+FD": "Proposed + F + D", "prop+FDC": "Proposed + F + D + C (robust)",
     "prop+FDC+gauss": "Robust + Gaussian MF",
 }
+# Turkish names for the figures only (LABEL stays English: it is the key in the CSV tables the report reads).
+LABEL_TR = {
+    "po": "P&O", "po+F": "P&O + filtre", "inc": "InC", "inc+F": "InC + filtre",
+    "flc_sinc": "Alg. 3 (makale)", "alg3+FDC": "Alg. 3 + dayanıklı kestirici",
+    "flc_sinc_csi": "Önerilen (makale)", "prop+F": "Önerilen + F", "prop+D": "Önerilen + D",
+    "prop+C": "Önerilen + C", "prop+FD": "Önerilen + F + D", "prop+FDC": "Önerilen + F + D + C (dayanıklı)",
+    "prop+FDC+gauss": "Dayanıklı + Gauss ÜF",
+}
+
+
+def pct(x: float) -> str:
+    """Turkish percent notation for figure labels: 0.5 -> '%0,5'."""
+    return "%" + f"{x:g}".replace(".", ",")
 
 
 def main() -> None:
@@ -47,10 +60,10 @@ def main() -> None:
              "po+F": ("tab:gray", "-"), "inc+F": ("tab:brown", "-")}
     for v, (c, ls) in style.items():
         d = agg[agg.variant == v]
-        ax.errorbar(d.noise_pct_fs, d.eff, yerr=d.eff_std, color=c, ls=ls, marker="o", capsize=3, label=LABEL[v])
-    ax.set_xlabel("Measurement noise σ (% of full scale: Voc, Isc)")
-    ax.set_ylabel("Average MPPT efficiency (%)")
-    ax.set_title("Noise robustness (Fig. 17 profile, mean ± std over 5 seeds)")
+        ax.errorbar(d.noise_pct_fs, d.eff, yerr=d.eff_std, color=c, ls=ls, marker="o", capsize=3, label=LABEL_TR[v])
+    ax.set_xlabel("Ölçüm gürültüsü σ (tam ölçeğin yüzdesi: Voc, Isc)")
+    ax.set_ylabel("Ortalama MPPT verimi (%)")
+    ax.set_title("Gürültüye dayanıklılık (makale Şekil 17 profili, 5 tohum: ortalama ± std. sapma)")
     ax.set_ylim(30, 100)
     ax.grid(alpha=0.3)
     ax.legend(fontsize=8, loc="lower left")
@@ -65,12 +78,13 @@ def main() -> None:
     x = np.arange(len(abl))
     for k, lv in enumerate(levels):
         d = agg[agg.noise_pct_fs == lv].set_index("variant").loc[abl]
-        ax.bar(x + (k - 1) * w, d.eff, w, yerr=d.eff_std, capsize=2, label=f"σ = {lv:g} % FS")
-    ax.set_xticks(x, [LABEL[a] for a in abl], rotation=20, ha="right", fontsize=8)
-    ax.set_ylabel("Efficiency (%)")
-    ax.set_ylim(40, 100)
-    ax.set_title("Ablation of the robust SInC estimator (F = EMA filter, D = dead band, C = clipping)")
-    ax.legend()
+        ax.bar(x + (k - 1) * w, d.eff, w, yerr=d.eff_std, capsize=2, label=f"σ = {pct(lv)} tam ölçek")
+    ax.set_xticks(x, [LABEL_TR[a] for a in abl], rotation=20, ha="right", fontsize=8)
+    ax.set_ylabel("Verim (%)")
+    ax.set_ylim(40, 110)
+    ax.set_yticks(range(40, 101, 10))
+    ax.set_title("Dayanıklı SInC kestiricisinin ablasyonu (F: EMA filtresi, D: ölü bölge, C: kırpma)")
+    ax.legend(loc="upper center", ncol=3, fontsize=9)
     ax.grid(axis="y", alpha=0.3)
     fig.tight_layout()
     fig.savefig(FIG / "noise_ablation.png", dpi=150)
@@ -82,9 +96,9 @@ def main() -> None:
         lg = run(make(v), noise_std=(lv * PANEL.voc, lv * PANEL.isc), seed=0)
         ax[0, col].plot(lg["t"], lg["p_pv"], "k", lw=0.7, label="P_pv")
         ax[0, col].plot(lg["t"], lg["p_opt"], "r:", label="P_opt")
-        ax[0, col].set_title(f"{LABEL[v]}, σ = 0.5 % FS")
+        ax[0, col].set_title(f"{LABEL_TR[v]}, σ = %0,5 tam ölçek")
         ax[1, col].plot(lg["t"], lg["d"], lw=0.7)
-        ax[1, col].set_xlabel("Time (s)")
+        ax[1, col].set_xlabel("Zaman (s)")
     ax[0, 0].set_ylabel("P (W)"); ax[1, 0].set_ylabel("D"); ax[0, 0].legend()
     fig.tight_layout()
     fig.savefig(FIG / "noise_timeseries_0p5pct.png", dpi=150)
