@@ -619,8 +619,8 @@ for k, (head, col, fill, lines) in enumerate(cols):
     text(s, x + 0.3, 2.5, 3.3, 2.7, lines, 16, bullets=True, space=12)
 box(s, 0.6, 5.55, 12.1, 1.15, INK)
 text(s, 0.9, 5.55, 11.5, 1.15,
-     "Katkının çıkış noktası: makale ölçüm hassasiyetine ve bölmeye duyarlılığı kendi sonuç "
-     "bölümünde sınırlılık olarak yazıyor, ama bunu hiç ölçmüyor.",
+     "Katkının çıkış noktası: makale ölçüm hassasiyetine ve bölmeye duyarlılığı sonuçlar "
+     "bölümünde ve Tablo 8'de sınırlılık olarak yazıyor, ama bunu hiç ölçmüyor.",
      17, WHITE, anchor=MSO_ANCHOR.MIDDLE)
 
 # 14 — contribution: the problem
